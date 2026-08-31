@@ -1,0 +1,14 @@
+[project]
+name = "garak-redteam-pipeline"
+version = "0.1.0"
+description = "A scored, feedback-driven target adapter for garak's agent_breaker probe -- for testing one specific agent deeply, not scanning many agents broadly."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "garak>=0.16.0",
+    "pyyaml",
+]
+
+[tool.setuptools.packages.find]
+include = ["garak_redteam_pipeline*"]

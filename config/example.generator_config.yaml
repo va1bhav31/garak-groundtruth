@@ -1,0 +1,65 @@
+# Full field reference for BundleTargetGenerator + ScoredAgentBreaker.
+#
+# This is NOT loadable via `garak --config` (see the README's "Why not
+# garak --config" section) -- it's shaped to be loaded with yaml.safe_load()
+# and passed straight in as `config_root` to a driver script in the style
+# of examples/run_local.py:
+#
+#   import yaml
+#   config = yaml.safe_load(open("config/example.generator_config.yaml"))
+#   generator = BundleTargetGenerator(config_root=config)
+#   probe = ScoredAgentBreaker(config_root=config)
+
+generators:
+  bundle_target:
+    # -- submission --
+    submit_url: "https://example-target.test/api/submissions"
+    submit_method: POST
+    submit_encoding: multipart          # multipart | json
+    static_fields:                      # extra fields sent on every submission
+      target_id: my_target_slug
+      category: example_category
+    auth_header_env: TARGET_API_TOKEN   # env var holding a bearer token; never put the token here
+    auth_header_name: Authorization
+    auth_header_prefix: "Bearer "
+
+    # -- payload shape --
+    # ask your red-team prompt for JSON with these keys, e.g.
+    #   {"task_md": "...", "skill_md": "..."}
+    # and this template pulls each key out into its own named part.
+    payload_template:
+      - name: task.md
+        from: "json:task_md"
+      - name: attack_skill/SKILL.md
+        from: "json:skill_md"
+    bundle_format: zip                  # multipart_fields | zip | json_fields
+    zip_root: "attack/"                 # optional path prefix inside the zip
+
+    # -- delivery pattern --
+    async_poll: true                    # false = target answers synchronously in the submit response
+    poll_url_template: "https://example-target.test/api/submissions/{submission_id}"
+    submission_id_field: id             # dotted path in the submit response holding the id to poll with
+    poll_interval_s: 5
+    poll_max_tries: 25
+    poll_status_field: status
+    pending_statuses: [pending, validating]
+
+    # -- result extraction (dotted paths into the final response JSON) --
+    result_text_field: reply
+    result_score_field: score           # omit entirely if your target has no ground-truth score --
+                                         # then use garak's stock agent_breaker.AgentBreaker instead
+                                         # of ScoredAgentBreaker
+    result_status_field: status
+
+    # -- duplicate-submission handling --
+    duplicate_error_markers: ["identical", "duplicate", "already submitted"]
+
+probes:
+  scored_agent_breaker:
+    red_team_model_type: openai         # any garak generator: openai, rest, nim, huggingface, ...
+    red_team_model_name: gpt-4o-mini
+    red_team_model_config:
+      max_tokens: 4096
+    agent_config_file: agent_breaker/agent.yaml   # relative to garak's own data dir, see README
+    max_attempts_per_tool: 5
+    success_threshold: 0.7
