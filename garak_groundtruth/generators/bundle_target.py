@@ -10,7 +10,7 @@ never through code changes:
 
 1. **Payload shape.** Some targets take one prompt string; others take a
    structured bundle (several named files, form fields, a zip). See
-   ``garak_redteam_pipeline.payloads.template``.
+   ``garak_groundtruth.payloads.template``.
 2. **Delivery pattern.** Some targets answer synchronously in the HTTP
    response; others accept a submission and require polling a status
    endpoint until it stops being "pending". Both are implemented here
@@ -33,7 +33,7 @@ from typing import List, Optional, Union
 from garak.attempt import Conversation, Message
 from garak.generators.base import Generator
 
-from garak_redteam_pipeline.payloads.template import build_payload
+from garak_groundtruth.payloads.template import build_payload
 
 
 def _dig(obj, dotted_path: str):

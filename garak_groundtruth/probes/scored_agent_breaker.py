@@ -11,7 +11,7 @@ whether the tool call happened and succeeded -- guessing from text is
 strictly worse than just trusting that score, for both loop control and
 final reporting. ``ScoredAgentBreaker`` overrides both to do exactly that,
 reading ``Message.notes["target_score"]`` as set by
-``garak_redteam_pipeline.generators.bundle_target.BundleTargetGenerator``.
+``garak_groundtruth.generators.bundle_target.BundleTargetGenerator``.
 
 Only use this with a target generator that actually sets
 ``result_score_field``. If your target doesn't return a real score, use

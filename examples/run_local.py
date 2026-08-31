@@ -29,8 +29,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from garak.attempt import Attempt, Conversation, Message, Turn
-from garak_redteam_pipeline.generators.bundle_target import BundleTargetGenerator
-from garak_redteam_pipeline.detectors.passthrough_score import PassthroughScore
+from garak_groundtruth.generators.bundle_target import BundleTargetGenerator
+from garak_groundtruth.detectors.passthrough_score import PassthroughScore
 
 CONFIG = {
     "generators": {

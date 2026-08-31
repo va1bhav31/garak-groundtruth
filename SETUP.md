@@ -10,19 +10,29 @@ the conceptual overview and full config field reference.
   — check yours: `python -c "import garak; print(garak.__version__)"`.
   Garak's plugin internals move between versions; if you're on something
   materially newer or older, expect to double check the `ScoredAgentBreaker`
-  override in `garak_redteam_pipeline/probes/scored_agent_breaker.py`
+  override in `garak_groundtruth/probes/scored_agent_breaker.py`
   still matches `garak.probes.agent_breaker.AgentBreaker`'s current shape.)
 
 ## 2. Install
 
-From the repo root:
+Just want the library, to wire into your own driver script?
 
 ```bash
+pip install garak-groundtruth
+```
+
+Want to run the included examples (step 3 below)? Clone the repo instead
+and install from it -- `-e` (editable) means your local edits take effect
+immediately, useful if you're modifying the adapter itself:
+
+```bash
+git clone https://github.com/va1bhav31/garak-groundtruth.git
+cd garak-groundtruth
 pip install -e .
 ```
 
-This installs `garak` and `pyyaml` as dependencies and makes
-`garak_redteam_pipeline` importable.
+Either way this installs `garak` and `pyyaml` as dependencies and makes
+`garak_groundtruth` importable.
 
 ## 3. Verify with the zero-credential smoke test
 
@@ -116,7 +126,7 @@ succeeding (see `docs/lessons.md`).
   different `red_team_model_type` — you're hitting garak's own
   `agent_breaker.AgentBreaker` instead of this repo's
   `ScoredAgentBreaker` (default red-team model is `nim`). Double check
-  you imported `garak_redteam_pipeline.probes.scored_agent_breaker.ScoredAgentBreaker`.
+  you imported `garak_groundtruth.probes.scored_agent_breaker.ScoredAgentBreaker`.
 - **Every attempt scores `0.0`** — almost always a `result_score_field`
   pointing at the wrong dotted path, or a target that doesn't return a
   score at all (see README's "Using `ScoredAgentBreaker` vs `AgentBreaker`"

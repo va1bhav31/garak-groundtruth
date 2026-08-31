@@ -1,14 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "garak-redteam-pipeline"
+name = "garak-groundtruth"
 version = "0.1.0"
-description = "A scored, feedback-driven target adapter for garak's agent_breaker probe -- for testing one specific agent deeply, not scanning many agents broadly."
+description = "Target adapter and ground-truth scoring for garak's agent_breaker probe: human-in-the-loop, targeted red-teaming of one agent at a time."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+keywords = ["garak", "red-team", "llm-security", "agentic", "ai-safety"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
 dependencies = [
     "garak>=0.16.0",
     "pyyaml",
 ]
 
+[project.urls]
+Homepage = "https://github.com/va1bhav31/garak-groundtruth"
+Repository = "https://github.com/va1bhav31/garak-groundtruth"
+Issues = "https://github.com/va1bhav31/garak-groundtruth/issues"
+
 [tool.setuptools.packages.find]
-include = ["garak_redteam_pipeline*"]
+include = ["garak_groundtruth*"]

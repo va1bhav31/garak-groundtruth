@@ -1,4 +1,6 @@
-# garak-redteam-pipeline
+# garak-groundtruth
+
+[![PyPI version](https://img.shields.io/pypi/v/garak-groundtruth.svg)](https://pypi.org/project/garak-groundtruth/)
 
 A target adapter and scoring path that lets [garak](https://github.com/NVIDIA/garak)'s
 own `agent_breaker` probe run against a target that (a) expects a
@@ -67,42 +69,56 @@ what we learned building this and where the real edges are.
                                    no LLM judge involved)
 ```
 
-- **`garak_redteam_pipeline/generators/bundle_target.py`** --
+- **`garak_groundtruth/generators/bundle_target.py`** --
   `BundleTargetGenerator`, a garak `Generator` subclass. Everything
   target-specific (submit URL, whether it's synchronous or
   submit-then-poll, which JSON fields hold the reply/score/status,
   auth header, duplicate-submission handling) is config, not code.
-- **`garak_redteam_pipeline/payloads/template.py`** -- turns the
+- **`garak_groundtruth/payloads/template.py`** -- turns the
   attacker's one block of text into named parts (files, form fields)
   per a config template. Ask your red-team prompt for JSON with named
   keys (`{"task_md": ..., "skill_md": ...}`) and pull each key out by
   name, or just pass the text through verbatim for single-prompt targets.
-- **`garak_redteam_pipeline/probes/scored_agent_breaker.py`** --
+- **`garak_groundtruth/probes/scored_agent_breaker.py`** --
   `ScoredAgentBreaker`, a thin subclass of garak's `agent_breaker.AgentBreaker`
   that uses the target's real score (from `Message.notes["target_score"]`)
   for loop control and final scoring, instead of garak's built-in LLM
   judge. Only use this when your target generator sets
   `result_score_field`; otherwise use garak's `AgentBreaker` unmodified,
   it already ships a solid judge for the text-only case.
-- **`garak_redteam_pipeline/detectors/passthrough_score.py`** --
+- **`garak_groundtruth/detectors/passthrough_score.py`** --
   `PassthroughScore`, reads that same real score for final reporting.
+
+## Install
+
+```bash
+pip install garak-groundtruth
+```
+
+This gets you the importable library (`garak_groundtruth.generators`,
+`.probes`, `.detectors`, `.payloads`) for wiring into your own driver
+script, per the "Pointing this at a real target" section below.
 
 ## Quickstart (no API keys, no real target needed)
 
-This proves out the actual new code in this repo -- the payload
-templating and submission/response plumbing -- against a trivial local
-target, using garak's built-in `test.Repeat` generator as a stand-in
-attacker.
+The example scripts (`examples/demo_target_server.py`,
+`examples/run_local.py`) live in this repo, not in the installed package
+-- clone it to run them:
 
 ```bash
-pip install -e .
+git clone https://github.com/va1bhav31/garak-groundtruth.git
+cd garak-groundtruth
+pip install -e .     # or: pip install garak-groundtruth
 python examples/demo_target_server.py &     # a toy local target on :8791
 python examples/run_local.py
 ```
 
-You should see a real HTTP round trip: a bundle built from the sample
-attack text, submitted as multipart form data, and a reply + score read
-back through `PassthroughScore`.
+This proves out the actual new code in this repo -- the payload
+templating and submission/response plumbing -- against a trivial local
+target, using garak's built-in `test.Repeat` generator as a stand-in
+attacker. You should see a real HTTP round trip: a bundle built from the
+sample attack text, submitted as multipart form data, and a reply + score
+read back through `PassthroughScore`.
 
 ## Pointing this at a real target
 
